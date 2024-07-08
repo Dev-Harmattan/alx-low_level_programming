@@ -1,21 +1,26 @@
 #include "main.h"
 /**
- * string_toupper - change lowercase letters to uppercase.
- * @s: analized string.
- *
- * Return: String with all letters Uppercased.
+ * _strstr - Entry point
+ * @haystack: input
+ * @needle: input
+ * Return: Always 0 (Success)
  */
-char *string_toupper(char *s)
+char *_strstr(char *haystack, char *needle)
 {
-	int i = 0;
-
-	while (*(s + i) != '\0')
+	for (; *haystack != '\0'; haystack++)
 	{
-		if (*(s + i) >= 'a' && *(s + i) <= 'z')
+		char *l = haystack;
+		char *p = needle;
+
+		while (*l == *p && *p != '\0')
 		{
-			*(s + i) = *(s + i) - 32;
+			l++;
+			p++;
 		}
-		i++;
+
+		if (*p == '\0')
+			return (haystack);
 	}
-	return (s);
+
+	return (0);
 }
