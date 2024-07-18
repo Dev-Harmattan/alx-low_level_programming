@@ -1,106 +1,77 @@
-#include "main.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include "main.h"
+
 /**
- * Error - prints Error str.
+ * count_word - helper function to count the number of words in a string
+ * @s: string to evaluate
  *
- * Return: Error and new line.
+ * Return: number of words
  */
-void Error(void)
+int count_word(char *s)
 {
-	_putchar('E');
-	_putchar('r');
-	_putchar('r');
-	_putchar('o');
-	_putchar('r');
-	_putchar('\n');
-	exit(98);
-}
-/**
- * allDigits - checks if all the characters are digits.
- * @arg: the arguments of program.
- * Return: 1 all digits 0 otherwise.
- */
-int allDigits(char **arg)
-{
-	int i, j;
+	int flag, c, w;
 
-	for (i = 1; i <= 2; i++)
-		for (j = 0; arg[i][j]; j++)
-		{
-			if (arg[i][j] < '0' || arg[i][j] > '9')
-				return (0);
-		}
-	return (1);
-}
-/**
- * _calloc- initializes memory spaces with zero.
- * @nmemb: string 1.
- * @size: string 2, concatenated to 1
- *
- * Return: pointer to the concatenated string.
- */
-void *_calloc(unsigned int nmemb, unsigned int size)
-{
-	unsigned int i;
-	char *newArray;
+	flag = 0;
+	w = 0;
 
-	if (nmemb == 0 || size == 0)
-		return (NULL);
-
-	newArray = malloc(nmemb * size);
-	if (newArray == NULL)
-		return (NULL);
-
-	for (i = 0; i < (nmemb * size); i++)
-		*(newArray + i) = 0;
-
-	return (newArray);
-}
-/**
- * main- multiplies 2 positive numbers.
- * @argc: counter of arguments.
- * @argv: vector of arguments
- * Return: ans or Error.
- */
-
-int main(int argc, char **argv)
-{
-	int i, j, carry, len, len_s1 = 0, len_s2 = 0;
-	char *s1 = *(argv + 1), *s2 = *(argv + 2);
-	int *a, *b, *ans;
-
-	if (argc != 3 || allDigits(argv) != 1)
-		Error();
-	if (*s1 == '0' || *s2 == '0')
-		_putchar('0');
-	while (*(*(argv + 1) + len_s1))
-		len_s1++;
-	while (*(*(argv + 2) + len_s2))
-		len_s2++;
-	len = len_s1 + len_s2 + 1;
-	a = (int *) malloc(len_s1 * sizeof(int));
-	b = (int *) malloc(len_s2 * sizeof(int));
-	ans = _calloc(len, sizeof(int));
-	if (a == NULL || b == NULL || ans == NULL)
-		Error();
-	for (i = len_s1 - 1, j = 0; i >= 0; i--, j++)
-		*(a + j) = *(s1 + i) - '0';
-	for (i = len_s2 - 1, j = 0; i >= 0; i--, j++)
-		*(b + j) = *(s2 + i) - '0';
-	for (i = 0; i < len_s2; i++)
-		for (j = 0; j < len_s1; j++)
-			*(ans + i + j) = *(ans + i + j) + *(b + i) * *(a + j);
-	for (i = 0; i < len_s1 + len_s2; i++)
+	for (c = 0; s[c] != '\0'; c++)
 	{
-		carry = *(ans + i) / 10, *(ans + i) = *(ans + i) % 10;
-		*(ans + i + 1) = *(ans + i + 1) + carry; }
-	for (i = len_s1 + len_s2; i >= 0; i--)
-		if (*(ans + i) > 0)
-			break;
-	for (; i >= 0; i--)
-		_putchar(*(ans + i) + '0');
-	_putchar('\n');
-	free(a), free(b), free(ans);
-	return (0);
+		if (s[c] == ' ')
+			flag = 0;
+		else if (flag == 0)
+		{
+			flag = 1;
+			w++;
+		}
+	}
+
+	return (w);
+}
+/**
+ * **strtow - splits a string into words
+ * @str: string to split
+ *
+ * Return: pointer to an array of strings (Success)
+ * or NULL (Error)
+ */
+char **strtow(char *str)
+{
+	char **matrix, *tmp;
+	int i, k = 0, len = 0, words, c = 0, start, end;
+
+	while (*(str + len))
+		len++;
+	words = count_word(str);
+	if (words == 0)
+		return (NULL);
+
+	matrix = (char **) malloc(sizeof(char *) * (words + 1));
+	if (matrix == NULL)
+		return (NULL);
+
+	for (i = 0; i <= len; i++)
+	{
+		if (str[i] == ' ' || str[i] == '\0')
+		{
+			if (c)
+			{
+				end = i;
+				tmp = (char *) malloc(sizeof(char) * (c + 1));
+				if (tmp == NULL)
+					return (NULL);
+				while (start < end)
+					*tmp++ = str[start++];
+				*tmp = '\0';
+				matrix[k] = tmp - c;
+				k++;
+				c = 0;
+			}
+		}
+		else if (c++ == 0)
+			start = i;
+	}
+
+	matrix[k] = NULL;
+
+	return (matrix);
 }
